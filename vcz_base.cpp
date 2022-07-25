@@ -32,6 +32,7 @@ void write(vector<string>::iterator &it){
 			cout << var[s] << '\n';
 		}else if(func.find(s) != func.end()){
 			func[s](it);
+			it--;
 			cout << ret << '\n';
 		}else{
 			cout << s << '\n';
@@ -47,6 +48,7 @@ bigint convert(string s){
 	while(s.size() && s.back() != '-'){
 		val += mul*(s.back() - '0');	
 		mul *= 10;
+		s.pop_back();
 	}
 	return val;
 }
@@ -62,10 +64,12 @@ void add(vector<string>::iterator &it){
 			sum += var[s];
 		}else if(func.find(s) != func.end()){
 			func[s](it);
+			it--;
 			sum += ret;
 		}else{
 			sum += convert(s);
 		}
+		++it;
 	}
 	ret = sum;
 	++it;
@@ -85,10 +89,12 @@ void creo(vector<string>::iterator &it){
 			var[vcur] = var[s];
 		}else if(func.find(s) != func.end()){
 			func[s](it);
+			it--;
 			var[vcur] = ret;
 		}else{
 			var[vcur] = convert(s);
 		}
+		++it;
 	}
 	++it;
 	return;
@@ -96,7 +102,10 @@ void creo(vector<string>::iterator &it){
 
 int run(vector<string> &program){
 	auto it = program.begin();
-	while(it != program.end()) func[*it](it);
+	while(it != program.end()){
+		if(func.find(*it) == func.end()) return 0;
+		func[*it](it);
+	}
 	return 1;
 }
 
@@ -110,7 +119,7 @@ int main(int args, char** argv){
 #ifdef COMPILE
 	run(program_code);
 #else
-	if(args == 0){
+	if(args == 1){
 		string s;
 		while(1){
 			getline(cin, s);
@@ -120,10 +129,10 @@ int main(int args, char** argv){
 				if(c == ' '){
 					program.push_back(tmp);
 					tmp.clear();
-				}
-				tmp += c;
+				}else tmp += c;
 			}
 			program.push_back(tmp);
+
 			run(program);
 		}
 	}else{

@@ -1,2 +1,2 @@
 R x y ;
-W ADD $x $y ; ;
+W ADD $x 132 $y ; ADD $x $y ; ;
