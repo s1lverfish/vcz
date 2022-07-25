@@ -18,19 +18,39 @@ int main(int args, char** argv){
 		program.push_back(s);
 	}
 
-	string insert = "vector<string> program_code = {\"W\", \"1444\", \";\"};";
-	cout << insert << endl;
+	string insert = "vector<string> program_code = {";
+	for(string ss : program){
+		insert += '\"';
+		insert += ss;
+		insert += '\"';
+		insert += ',';
+	}
+	insert.pop_back();
+	insert += "};";
 
-	ofstream vcz_base_stream;
-	vcz_base_stream.open("vcz_base.cpp", ios::app);
-	cout << vcz_base_stream.tellp() << endl;
-	vcz_base_stream.seekp(-50, ios::cur);
-	cout << vcz_base_stream.tellp() << endl;
-	vcz_base_stream << insert;
-	vcz_base_stream.close();
+	ofstream out;
+	ifstream vcz;
+	out.open("tmp");
+	vcz.open("vcz_base.cpp");
 
+	string line;
+	getline(vcz, line);
+	out << line << '\n';
+	getline(vcz, line);
+	out << line << '\n';
 
-//	system("g++ vcz_base.cpp -o vcz -DCOMPILE"); 
+	out << insert << '\n';
+
+	while(getline(vcz, line)){
+		out << line << '\n';
+	}
+
+	vcz.close();
+	out.close();
+
+	system("mv tmp vcz_base.cpp");
+
+	system("g++ vcz_base.cpp -o vcz -DCOMPILE"); 
 
 	return 0;
 }
