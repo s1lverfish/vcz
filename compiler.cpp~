@@ -40,7 +40,7 @@ int main(int args, char** argv){
 	out << line << '\n';
 
 	out << insert << '\n';
-
+	getline(vcz,line);
 	while(getline(vcz, line)){
 		out << line << '\n';
 	}

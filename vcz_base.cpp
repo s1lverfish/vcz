@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-vector<string> program_code = {"R","x","y",";","W","ADD","$x","$y",";",";"};
+vector<string> program_code = {"R","x","y",";","W","ADD","$x","132","$y",";","ADD","$x","$y",";",";","CREO","z","ADD","$x","$y",";",";","W","$z","100",";"};
 
 typedef long long bigint;
 
