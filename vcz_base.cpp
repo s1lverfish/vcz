@@ -1,14 +1,43 @@
 #include <bits/stdc++.h>
 using namespace std;
-vector<string> program_code = {"R","x","y",";","W","ADD","$x","132","$y",";","ADD","$x","$y",";",";","CREO","z","ADD","$x","$y",";",";","W","$z","100",";"};
+vector<string> program_code = {"COMPILER_FUNCTION","$0",";"};
 
 typedef long long bigint;
 
-map<string, function<void(vector<string>::iterator&)>> func;
+map<string, int> func;
+map<string, vector<string>> stored_func;
 map<string,	bigint> var; 
-
+string in_string;
 
 bigint ret = -1;
+
+int do_func(vector<string>::iterator &it);
+
+bigint convert(string s){
+	bigint sign = (s[0] != '-') - (s[0] == '-'), val = 0, mul = 1;
+	while(s.size() && s.back() != '-'){
+		val += mul*(s.back() - '0');	
+		mul *= 10;
+		s.pop_back();
+	}
+	return val;
+}
+
+//evaluate function
+bigint eval(vector<string>::iterator &it){
+	string s = *it;
+	if(s[0] == '$'){
+		s = string(s.begin()+1, s.end());
+		++it;
+		return var[s];
+	}else if(func[s]){
+		do_func(it);
+		return ret;
+	}else{
+		++it;
+		return convert(s);
+	}
+}
 
 void read(vector<string>::iterator &it){
 	++it;
@@ -23,56 +52,28 @@ void read(vector<string>::iterator &it){
 	return;
 }
 
+
 void write(vector<string>::iterator &it){
 	++it;
-	while(*it != ";"){
-		string s = *it;
-		if(s[0] == '$'){
-			s = string(s.begin()+1, s.end());
-			cout << var[s] << '\n';
-		}else if(func.find(s) != func.end()){
-			func[s](it);
-			it--;
-			cout << ret << '\n';
-		}else{
-			cout << s << '\n';
-		}
-		++it;
-	}
+	while(*it != ";") cout << eval(it) << '\n';
 	++it;
 	return;
-}
-
-bigint convert(string s){
-	bigint sign = (s[0] != '-') - (s[0] == '-'), val = 0, mul = 1;
-	while(s.size() && s.back() != '-'){
-		val += mul*(s.back() - '0');	
-		mul *= 10;
-		s.pop_back();
-	}
-	return val;
 }
 
 void add(vector<string>::iterator &it){
 	++it;
     bigint sum = 0;
-	while(*it != ";"){
-		string s = *it;
-
-		if(s[0] == '$'){
-			s = string(s.begin()+1, s.end());
-			sum += var[s];
-		}else if(func.find(s) != func.end()){
-			func[s](it);
-			it--;
-			sum += ret;
-		}else{
-			sum += convert(s);
-		}
-		++it;
-	}
+	while(*it != ";") sum += eval(it);
 	ret = sum;
 	++it;
+	return;
+}
+
+void eq(vector<string>::iterator &it){
+	++it;
+	bigint val = 0;
+
+
 	return;
 }
 
@@ -82,20 +83,7 @@ void creo(vector<string>::iterator &it){
 	assert(isalpha(vcur[0]));
 	assert(var.find(vcur) == var.end());
 	++it;
-	while(*it != ";"){
-		string s = *it;
-		if(s[0] == '$'){
-			s = string(s.begin()+1, s.end());
-			var[vcur] = var[s];
-		}else if(func.find(s) != func.end()){
-			func[s](it);
-			it--;
-			var[vcur] = ret;
-		}else{
-			var[vcur] = convert(s);
-		}
-		++it;
-	}
+	while(*it != ";") var[vcur] = eval(it);
 	++it;
 	return;
 }
@@ -103,18 +91,47 @@ void creo(vector<string>::iterator &it){
 int run(vector<string> &program){
 	auto it = program.begin();
 	while(it != program.end()){
-		if(func.find(*it) == func.end()) return 0;
-		func[*it](it);
+		if(func[*it]) do_func(it);
+		else return 0;
 	}
+	return 1;
+}
+
+void compile_func(vector<string>::iterator &it){
+	++it;	
+
+	string comp = "./comp ";
+	if(*it == "$0"){
+		comp += in_string;
+	}else{
+		comp += *it;
+	}
+	char *str = new char[comp.size()];
+	for(int i = 0; i < comp.size(); ++i) str[i] = comp[i];
+	//cout << str << '\n';
+	system(str);
+
+	while(*it != ";") ++it;
+	++it;
+	return;
+}
+
+int do_func(vector<string>::iterator &it){
+	if(*it == "R") read(it);	
+	else if(*it == "W") write(it);
+	else if(*it == "CREO") creo(it);
+	else if(*it == "ADD") add(it);
+	else if(*it == "EQ") eq(it);
+	else if(*it == "COMPILE_FUNC") compile_func(it);
+	else run(stored_func[*it]);
 	return 1;
 }
 
 int main(int args, char** argv){
 
-	func["R"] = read;
-	func["W"] = write;
-	func["CREO"] = creo;
-	func["ADD"] = add;
+	if(args > 1) in_string = argv[1];
+
+func["R"] = func["W"] = func["CREO"] = func["ADD"] = func["EQ"] = func["COMPILE_FUNC"] = 1;
 
 #ifdef COMPILE
 	run(program_code);

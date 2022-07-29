@@ -2,3 +2,4 @@ R valtozo_nev ; // reads into variable
 W $valtozo_nev 15 ; // writes everything to terminal
 CREO x $value ; // creates var x with value value
 ADD a b c d e f ; // returns number
+EQ a b c d e f ; // 1 if equal 0 if not

@@ -50,7 +50,20 @@ int main(int args, char** argv){
 
 	system("mv tmp vcz_base.cpp");
 
-	system("g++ vcz_base.cpp -o vcz -DCOMPILE"); 
+	string call = "g++ vcz_base.cpp -o ";
+	call += argv[1];
+	call.pop_back();
+	call.pop_back();
+	call.pop_back();
+	call.pop_back();
+	call += " -DCOMPILE";
+
+	len = call.size();
+	char *callstr = new char[len];
+
+	for(int i = 0; i < len; ++i) callstr[i] = call[i];
+
+	system(callstr);
 
 	return 0;
 }

@@ -1,2 +1,4 @@
 R x y ;
 W ADD $x 132 $y ; ADD $x $y ; ;
+CREO z ADD $x $y ; ;
+W $z 100 ;
