@@ -1,0 +1,19 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main(){
+	string s; cin >> s;
+	int val = 0, mul = 1;
+	for(int i = 0; i < s.size(); i += 2){
+		swap(s[i], s[i+1]);
+	}
+	reverse(s.begin(), s.end());
+	cout << s << endl;
+	while(s.size()){
+		val += mul * (s.back() <= '9' ? s.back() - '0' : s.back() - 'a' + 10);
+		s.pop_back();
+		mul *= 16;
+	}
+	cout << val << '\n';
+}

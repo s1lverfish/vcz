@@ -1,1 +1,1 @@
- COMPILE_FUNC $0 ;
+ COMPILE_FUNC $0 $1 ;
